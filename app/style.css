@@ -40,6 +40,7 @@ body{
 }
 #Tritanopia, #off{
     background-color: #C3C6C0;
+    border: 1px solid #000000;
 }
 .title{
     padding:10px;
