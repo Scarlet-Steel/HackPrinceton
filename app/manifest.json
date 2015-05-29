@@ -1,11 +1,11 @@
 
 {
- "name": "toppest of keks",
- "version": "0.0.1",
+ "name": "Color Blindness Program",
+ "version": "1.0",
  "manifest_version": 2,
   "background": {"scripts": ["background.js"],
    "persistent":true},
-  "description": "jet fuel can't melt dank memes",
+  "description": "This Google Chrome extension changes color on websites for color blind people.",
   "permissions": ["tabs"],
 	"browser_action": {
 		"default_icon": "icon.png",
