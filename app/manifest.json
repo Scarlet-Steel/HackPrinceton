@@ -3,6 +3,7 @@
  "name": "Color Blindness Program",
  "version": "1.0",
  "manifest_version": 2,
+ "authors": "Edward Cai, Hill Chang, Matthew Chin, Julian Gau"
   "background": {"scripts": ["background.js"],
    "persistent":true},
   "description": "This Google Chrome extension changes color on websites for color blind people.",
