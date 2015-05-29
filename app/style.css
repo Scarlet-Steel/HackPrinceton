@@ -15,7 +15,7 @@ color:after{
 
 #colour span{
     display: inline-block;
-    width: 50px;
+    width: 100px;
     height: 50px;
 }
 
@@ -23,22 +23,22 @@ body{
     width:200px;
     text-align:center;
 }
-#tungsten{
+#Protanomaly{
     background-color:#FF9329;
 }
-#halogen{
+#Deuteranomaly{
     background-color:#FFD6AA;
 }
-#flourescent{
+#Tritanomaly{
     background-color:#FFE0E5;
 }
-#daylight{
+#Protanopia{
     background-color:#C9E2E1;
 }
-#black{
+#Deuteranopia{
     background-color: #000000;
 }
-#white, #off{
+#Tritanopia, #off{
     background-color: #FFFFFF;
     border: 1px solid #000000;
 }
