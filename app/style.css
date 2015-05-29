@@ -24,23 +24,22 @@ body{
     text-align:center;
 }
 #Protanomaly{
-    background-color:#FF9329;
+    background-color:#C3C6C0;
 }
 #Deuteranomaly{
-    background-color:#FFD6AA;
+    background-color:#C3C6C0;
 }
 #Tritanomaly{
-    background-color:#FFE0E5;
+    background-color:#C3C6C0;
 }
 #Protanopia{
-    background-color:#C9E2E1;
+    background-color:#C3C6C0;
 }
 #Deuteranopia{
-    background-color: #000000;
+    background-color: #C3C6C0;
 }
 #Tritanopia, #off{
-    background-color: #FFFFFF;
-    border: 1px solid #000000;
+    background-color: #C3C6C0;
 }
 .title{
     padding:10px;
