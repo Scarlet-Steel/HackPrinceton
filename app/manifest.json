@@ -1,8 +1,8 @@
 {
-   "name": "Color Blindness Program";
-   "version":"1.0";
+   "name": "Color Blindness Program",
+   "version":"1.0",
    "manifest_version": 2,
-   "authors": "Edward Cai, Hill Chang, Matthew Chin, Julian Gau";
+   "authors": "Edward Cai, Hill Chang, Matthew Chin, Julian Gau",
  
    "browser_action": {
       "default_icon": {
