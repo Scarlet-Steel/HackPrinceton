@@ -89,8 +89,11 @@ Instance.prototype.Name=function()
 
 }
 
-Instance.prototype.Grow=function()
+Instance.prototype.FindSources=function()
 {
+	//Hill will do this part
+	//This function will fill in this.children
+	
 	if (this.grown==false)
 	{
 		this.Name();
