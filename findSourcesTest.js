@@ -16,13 +16,15 @@ function isNumeric(n) {
 //Find count. and then go to step 3
 
 var indexOfReference = rawText.search("References");
-rawText = rawText.substr(indexOfReference+11); //cuts out "References" and everything before
+rawText = rawText.substring(indexOfReference+11); //cuts out "References" and everything before
+
 
 var index1 = 0;
-var index2 = 0;
 var citation = "";
 var test = "";
 var count = 1;
+
+
 
 while (true)
 {
@@ -30,26 +32,29 @@ while (true)
   while(true)
   {
   	index1 = rawText.search("\\(");
-  	index2 = rawText.search("\\)");
-  	if(isNumeric(rawText.substr(index1+1,index2-1)) && 1500 < rawText.substr(index1+1,index2-1) < 2100)
+  	if(isNumeric(rawText.substring(index1+1,index1+5)) && 1500 < rawText.substring(index1+1,index1+5) < 2100)
   	{
-  		citation+=rawText.substr(0,index1-1);
+  		citation+=rawText.substring(0,index1);
   		break
   	}
   }
-  rawText = rawText.substr(index2+1);
+  rawText = rawText.substring(index1+7);
   
-  index1 = rawText.search(".");
-  citation+=rawText.substr(0,index1-1);
+  index1 = rawText.search("\\.");
+  citation+=", "+rawText.substring(0,index1);
   paper.children.push(citation)
+
   
+  count++;
   index1 = rawText.search(count+".");
-  if(index == -1)
+  if(index1 == -1)
   {
   	break
   }
   else
   {
-  	rawText = rawText.substr(index1);
+  	rawText = rawText.substring(index1);
   }
 }
+
+
