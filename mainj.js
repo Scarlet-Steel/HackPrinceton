@@ -8,41 +8,6 @@ function paper(name,contains)
 	papersN++;
 }
 
-function CheckMissingpapers()
-{
-	var allContents=[];
-	var allMissing=[];
-	for (var i in papers)
-	{
-		var thispaper=papers[i];
-		for (var i2 in thispaper.contains)
-		{
-			thisContent=thispaper.contains[i2];
-			if (typeof(thisContent)!="string")
-			{
-				for (var i3 in thisContent) {allContents.push(thisContent[i3]);}
-			}
-			else allContents.push(thisContent);
-		}
-	}
-	for (var i in allContents)
-	{
-		var thisContent=allContents[i];
-		if (thisContent.charAt(0)==".") thisContent=thisContent.substring(1);
-		thisContent=thisContent.split(",");
-		thisContent=thisContent[0];
-		if (!papers[thisContent] && thisContent!="") allMissing.push(thisContent);
-	}
-//	allMissing=allMissing.filter(function(elem,pos) {return allMissing.indexOf(elem)==pos;});//remove duplicates
-
-	var str="papers that are linked to, but don't exist :\n";
-	for (var i in allMissing)
-	{
-		str+=allMissing[i]+"\n";
-	}
-	alert(str);
-}
-
 function Cleanpapers()
 {
 	for (var iT in papers)
