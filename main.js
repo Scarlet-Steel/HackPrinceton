@@ -63,17 +63,63 @@ Instance.prototype.findSources=function()
 {
 	if (this.grown==false)
 	{
-		this.Name();
-		for (var i in this.type.contains)
-		{
-			toMake=this.type.contains[i];
-			console.log(toMake)
-			var New=Make(Nodes[toMake].name);
-			console.log(Nodes[toMake])
-			New.parent=this;
-			this.children.push(New);
+		var sources = []
+
+		var rawText = "random shit blah References 1. Larkin PA (1996) Concepts and issues in marine ecosystem management. Rev Fish Biol Fisheries 6: 139–164. 2. Ruckelshaus M, Klinger T, Knowlton N, DeMaster DP (2008) Marine ecosystem-based management in practice: scientific and governance challenges. Biosci 58: 53–63. 3. Brewer JF (2011) Paper fish and policy conflict: Catch shares and ecosystem- based management in Maine’s groundfishery. Ecol Soc 16: 15. 4. Corkeron P (2006) Opposing views of the ––Ecosystem Approach’’ to fisheries management. Conserv Biol 20: 617–619. 5. Stephenson RL, Lane DE (1995) Fisheries Management Sciences: a plea for conceptual change. Can J Fish Aquat Sci 52: 2051–2056. ";
+
+		function isNumeric(n) {
+  		return !isNaN(parseFloat(n)) && isFinite(n);
 		}
-		this.grown=true;
+
+		//Search backwards through file until you see "References"
+		//count = 1
+		//Take everything char by char until (****) with 4 integer chars
+		//Skip the date and then take everything until .
+		//Add that whole thing using paper.children.push(citation)
+		//count++
+		//Find count. and then go to step 3
+
+		var indexOfReference = rawText.search("References");
+		rawText = rawText.substring(indexOfReference+11); //cuts out "References" and everything before
+
+
+		var index1 = 0;
+		var citation = "";
+		var test = "";
+		var count = 1;
+
+
+
+		while (true)
+		{
+  		citation = "";
+  		while(true)
+  		{
+  			index1 = rawText.search("\\(");
+  			if(isNumeric(rawText.substring(index1+1,index1+5)) && 1500 < rawText.substring(index1+1,index1+5) < 2100)
+  			{
+  				citation+=rawText.substring(0,index1);
+  				break
+  			}
+  		}
+  		rawText = rawText.substring(index1+7);
+  
+  		index1 = rawText.search("\\.");
+  		citation+=", "+rawText.substring(0,index1);
+  		sources.push(citation)
+
+  		count++;
+  		index1 = rawText.search(count+".");
+  		if(index1 == -1)
+  		{
+  			break
+  		}
+  		else
+  		{
+  			rawText = rawText.substring(index1);
+  		}
+	}
+	this.grown=true;
 	}
 }
 
