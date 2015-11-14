@@ -89,6 +89,15 @@ Instance.prototype.Name=function()
 
 }
 
+Instance.prototype.GetPDF=function()
+{
+	//Gets PDF from JSTOR using title string
+}
+
+Instance.prototype.ConvertPDFToTxt=function()
+{
+	//Takes the PDF and gets a .txt file of the last ??? pages
+}
 Instance.prototype.FindSources=function()
 {
 	//Hill will do this part
