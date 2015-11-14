@@ -9,46 +9,6 @@ function Node(name,contains)
 	NodesN++;
 }
 
-function CleanNodes()
-{
-	for (var iT in Nodes)
-	{
-		thisT=Nodes[iT];
-
-		toConcat=[];
-		for (var i in thisT.contains)
-		{
-			if (typeof(thisT.contains[i])=="string")
-			{
-				if (thisT.contains[i].charAt(0)==".")
-				{
-					if (Nodes[thisT.contains[i].substring(1)]!=undefined)
-					{
-						toConcat=toConcat.concat(Nodes[thisT.contains[i].substring(1)].contains);
-					}
-					thisT.contains[i]="";
-				}
-			}
-		}
-
-		if (toConcat.length>0)
-		{
-			for (var i in toConcat)
-			{
-				thisT.contains.push(toConcat[i]);
-			}
-		}
-
-		newContains=[];
-		for (var i in thisT.contains)
-		{
-			if (thisT.contains[i]!="") newContains.push(thisT.contains[i]);
-		}
-		thisT.contains=newContains;
-
-	}
-}
-
 var iN=0;
 var Instances=[];
 function Instance(source)
@@ -98,47 +58,20 @@ Instance.prototype.ConvertPDFToTxt=function()
 {
 	//Takes the PDF and gets a .txt file of the last ??? pages
 }
-Instance.prototype.FindSources=function()
+
+Instance.prototype.findSources=function()
 {
-	//Hill will do this part
-	//This function will fill in this.children
-	
 	if (this.grown==false)
 	{
 		this.Name();
 		for (var i in this.type.contains)
 		{
 			toMake=this.type.contains[i];
-			if (typeof(toMake)!="string")
-			{toMake=Choose(toMake);}
-			toMake=toMake.split(",");
-			var makeAmount=1;
-			var makeProb=100;
-			if (toMake[1]==undefined) toMake[1]=1;
-			else
-			{
-				makeAmount=toMake[1].split("-");
-				if (makeAmount[1]==undefined) makeAmount=makeAmount[0]; else
-				{
-					makeAmount=Rand(makeAmount[0],makeAmount[1]);
-				}
-				makeProb=(toMake[1]+"?").split("%");
-				if (makeProb[1]!=undefined) {makeProb=makeProb[0];makeAmount=1;} else makeProb=100;
-			}
-
-			if (Nodes[toMake[0]]!=undefined)
-			{
-				if (Math.random()*100<=makeProb)
-				{
-					for (var ii=0;ii<makeAmount;ii++)
-					{
-						var New=Make(Nodes[toMake[0]].name);
-						New.parent=this;
-						this.children.push(New);
-					}
-				}
-			}
-
+			console.log(toMake)
+			var New=Make(Nodes[toMake].name);
+			console.log(Nodes[toMake])
+			New.parent=this;
+			this.children.push(New);
 		}
 		this.grown=true;
 	}
@@ -154,7 +87,7 @@ Instance.prototype.List=function()
 		str+='<div id="div'+this.children[i].n+'">'+this.children[i].name+'</div>';
 	}
 	//if (this.children.length>0) document.getElementById("div"+this.n).innerHTML='<span onclick="Toggle('+this.n+');"><span class="arrow" id="arrow'+this.n+'">+</span> '+this.name+'</span><div id="container'+this.n+'" class="node" style="display:none;">'+str+'</div>';
-	if (this.children.length>0) document.getElementById("div"+this.n).innerHTML='<a href="javascript:Toggle('+this.n+');" style="padding-right:8px;" alt="archetype : '+(this.type.name)+'" title="archetype : '+(this.type.name)+'"><span class="arrow" id="arrow'+this.n+'">+</span> '+this.name+'</a><div id="container'+this.n+'" class="node" style="display:none;'+addStyle+'">'+str+'</div>';
+	if (this.children.length>0) document.getElementById("div"+this.n).innerHTML='<a href="javascript:Toggle('+this.n+');" style="padding-right:8px;" alt="archetype : '+(this.type.name)+'" title="archetype : '+(this.type.name)+'"><span class="arrow" id="arrow'+this.n+'">+</span> '+this.type.name+'</a><div id="container'+this.n+'" class="node" style="display:none;'+addStyle+'">'+str+'</div>';
 	else document.getElementById("div"+this.n).innerHTML='<span class="emptyNode">'+this.name+'</span>';
 }
 
@@ -175,7 +108,7 @@ function Toggle(source)
 
 		for (var i in Instances[source].children)
 		{
-			if (Instances[source].children[i].grown==false) {Instances[source].children[i].Grow(0);Instances[source].children[i].List(0);}
+			if (Instances[source].children[i].grown==false) {Instances[source].children[i].findSources(0);Instances[source].children[i].List(0);}
 		}
 
 
@@ -191,20 +124,24 @@ function Toggle(source)
 	}
 }
 
-Debug('Building...');
+new Node(input, ["a", "b", "c", "d"])
+new Node("a", ["aa", "ab", "ac", "ad"]);
+new Node("b", ["ba", "bb", "ac", input]);
+new Node("c", ["aa", "bb", "ac", "ad"]);
+new Node("d", ["aa", "bb", input, "dd"]);
 
-CleanNodes();
+Debug('Building...');
 
 document.getElementById("debug").innerHTML="";
 Debug('<div id="div0" class="node"></div>');
 
-function LaunchNest(source)
+function Launch(source)
 {
 	if (!Nodes[source])
 		{
 			source="Error.";
 		}
 	var Seed = Make(source);
-	Seed.Grow(0);
+	Seed.findSources(0);
 	Seed.List();
 }
