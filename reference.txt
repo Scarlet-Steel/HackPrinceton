@@ -1,7 +1,0 @@
-Protanomaly - reduced sensitivity to red
-Deuteranomaly - reduced sensitivity to green
-Tritanomaly - reduced sensitivity to blue
-
-Protanopia - unable to see red
-Deuteranopia - unable to see green
-Tritanopia - unable to see blue
