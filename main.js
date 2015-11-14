@@ -105,7 +105,7 @@ Instance.prototype.findSources=function()
   		rawText = rawText.substring(index1+7);
   
   		index1 = rawText.search("\\.");
-  		citation+=", "+rawText.substring(0,index1);
+  		citation+="| "+rawText.substring(0,index1); //adds the title of the paper to the authors, separated by a bar
   		sources.push(citation)
 
   		count++;
