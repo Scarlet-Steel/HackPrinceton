@@ -1,24 +1,25 @@
-var Nodes=[];
-var NodesN=0;
-function Node(name,contains)
+
+var Papers=[];
+var PapersN=0;
+function Paper(name,contains)
 {
 	this.name=name;
 	this.contains=contains;
 
-	Nodes[name]=this;
-	NodesN++;
+	Papers[name]=this;
+	PapersN++;
 }
 
-function CheckMissingNodes()
+function CheckMissingPapers()
 {
 	var allContents=[];
 	var allMissing=[];
-	for (var i in Nodes)
+	for (var i in Papers)
 	{
-		var thisNode=Nodes[i];
-		for (var i2 in thisNode.contains)
+		var thisPaper=Papers[i];
+		for (var i2 in thisPaper.contains)
 		{
-			thisContent=thisNode.contains[i2];
+			thisContent=thisPaper.contains[i2];
 			if (typeof(thisContent)!="string")
 			{
 				for (var i3 in thisContent) {allContents.push(thisContent[i3]);}
@@ -32,11 +33,11 @@ function CheckMissingNodes()
 		if (thisContent.charAt(0)==".") thisContent=thisContent.substring(1);
 		thisContent=thisContent.split(",");
 		thisContent=thisContent[0];
-		if (!Nodes[thisContent] && thisContent!="") allMissing.push(thisContent);
+		if (!Papers[thisContent] && thisContent!="") allMissing.push(thisContent);
 	}
 //	allMissing=allMissing.filter(function(elem,pos) {return allMissing.indexOf(elem)==pos;});//remove duplicates
 
-	var str="Nodes that are linked to, but don't exist :\n";
+	var str="Papers that are linked to, but don't exist :\n";
 	for (var i in allMissing)
 	{
 		str+=allMissing[i]+"\n";
@@ -44,11 +45,11 @@ function CheckMissingNodes()
 	alert(str);
 }
 
-function CleanNodes()
+function CleanPapers()
 {
-	for (var iT in Nodes)
+	for (var iT in Papers)
 	{
-		thisT=Nodes[iT];
+		thisT=Papers[iT];
 
 		toConcat=[];
 		for (var i in thisT.contains)
@@ -57,9 +58,9 @@ function CleanNodes()
 			{
 				if (thisT.contains[i].charAt(0)==".")
 				{
-					if (Nodes[thisT.contains[i].substring(1)]!=undefined)
+					if (Papers[thisT.contains[i].substring(1)]!=undefined)
 					{
-						toConcat=toConcat.concat(Nodes[thisT.contains[i].substring(1)].contains);
+						toConcat=toConcat.concat(Papers[thisT.contains[i].substring(1)].contains);
 					}
 					thisT.contains[i]="";
 				}
@@ -88,8 +89,8 @@ var iN=0;
 var Instances=[];
 function Instance(what)
 {
-	this.name="node";
-	this.type=Nodes[what];
+	this.name="Paper";
+	this.type=Papers[what];
 	this.parent=0;
 	this.children=[];
 	this.n=iN;
@@ -149,13 +150,13 @@ Instance.prototype.Grow=function()
 				if (makeProb[1]!=undefined) {makeProb=makeProb[0];makeAmount=1;} else makeProb=100;
 			}
 
-			if (Nodes[toMake[0]]!=undefined)
+			if (Papers[toMake[0]]!=undefined)
 			{
 				if (Math.random()*100<=makeProb)
 				{
 					for (var ii=0;ii<makeAmount;ii++)
 					{
-						var New=Make(Nodes[toMake[0]].name);
+						var New=Make(Papers[toMake[0]].name);
 						New.parent=this;
 						this.children.push(New);
 					}
@@ -176,9 +177,9 @@ Instance.prototype.List=function()
 	{
 		str+='<div id="div'+this.children[i].n+'">'+this.children[i].name+'</div>';
 	}
-	//if (this.children.length>0) document.getElementById("div"+this.n).innerHTML='<span onclick="Toggle('+this.n+');"><span class="arrow" id="arrow'+this.n+'">+</span> '+this.name+'</span><div id="container'+this.n+'" class="node" style="display:none;">'+str+'</div>';
-	if (this.children.length>0) document.getElementById("div"+this.n).innerHTML='<a href="javascript:Toggle('+this.n+');" style="padding-right:8px;" alt="archetype : '+(this.type.name)+'" title="archetype : '+(this.type.name)+'"><span class="arrow" id="arrow'+this.n+'">+</span> '+this.name+'</a><div id="container'+this.n+'" class="node" style="display:none;'+addStyle+'">'+str+'</div>';
-	else document.getElementById("div"+this.n).innerHTML='<span class="emptyNode">'+this.name+'</span>';
+	//if (this.children.length>0) document.getElementById("div"+this.n).innerHTML='<span onclick="Toggle('+this.n+');"><span class="arrow" id="arrow'+this.n+'">+</span> '+this.name+'</span><div id="container'+this.n+'" class="Paper" style="display:none;">'+str+'</div>';
+	if (this.children.length>0) document.getElementById("div"+this.n).innerHTML='<a href="javascript:Toggle('+this.n+');" style="padding-right:8px;" alt="archetype : '+(this.type.name)+'" title="archetype : '+(this.type.name)+'"><span class="arrow" id="arrow'+this.n+'">+</span> '+this.name+'</a><div id="container'+this.n+'" class="Paper" style="display:none;'+addStyle+'">'+str+'</div>';
+	else document.getElementById("div"+this.n).innerHTML='<span class="emptyPaper">'+this.name+'</span>';
 }
 
 function Make(what)
@@ -218,32 +219,32 @@ function Toggle(what)
 
 //And now, the fun begins!
 
-//How to add a new Node :
-//	new Node(name,contains,name generator);
-//		-name is the referral name for this Node. Unless a name generator is specified, this name will be the default name for any instances of this Node.
-//		-contains is an array of Nodes that an instance of this Node contains, specified by their name.
-//			-For example, ["banana"] means this Node contains exactly 1 instance of a banana. ["banana","orange"] means it contains 1 banana and 1 orange.
+//How to add a new Paper :
+//	new Paper(name,contains,name generator);
+//		-name is the referral name for this Paper. Unless a name generator is specified, this name will be the default name for any instances of this Paper.
+//		-contains is an array of Papers that an instance of this Paper contains, specified by their name.
+//			-For example, ["banana"] means this Paper contains exactly 1 instance of a banana. ["banana","orange"] means it contains 1 banana and 1 orange.
 //			-["banana","strawberry,25%"] means it will contain 1 banana, and has a 25% probability of also containing a strawberry.
 //			-["banana,2-7"] means it will contain between 2 and 7 bananas.
-//			-[".banana"] will not include a banana in the Node; instead, the Node will contain whatever the banana normally contains.
+//			-[".banana"] will not include a banana in the Paper; instead, the Paper will contain whatever the banana normally contains.
 //			-["banana",["sugar","honey"]] will include a banana, and either sugar or honey. Unfortunately, this does not work with the format ".sugar" or ".honey".
-//		-name generator is optional; if specified, the instance of the Node will be named according to this.
+//		-name generator is optional; if specified, the instance of the Paper will be named according to this.
 //			It can be either an array containing other arrays (the name will be patched up from an element of each array) or an identifier for the Name function, like *BOOK*.
 //			A name generator of [["blue ","red "],["frog","toad"]] will produce names such as "blue frog" or "red toad".
 
 Debug('Building...');
 
-CleanNodes();
+CleanPapers();
 
-//CheckMissingNodes();
-//alert("There are "+NodesN+" node archetypes.");
+//CheckMissingPapers();
+//alert("There are "+PapersN+" Paper archetypes.");
 
 document.getElementById("debug").innerHTML="";
-Debug('<div id="div0" class="node"></div>');
+Debug('<div id="div0" class="Paper"></div>');
 
 function LaunchNest(what)
 {
-	if (!Nodes[what])
+	if (!Papers[what])
 		{
 			what="error";
 		}
