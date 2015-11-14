@@ -11,7 +11,7 @@ function App(){
     
     for (i = 1; i <= total; i++){
       var page = pdf.getPage(i);
-      page = ceil(page/10);
+      page = ceil(page/6);
 
       //var canvas = document.createElement('canvas');
       //canvas.id = 'page' + i;
