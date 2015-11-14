@@ -8,22 +8,22 @@
 <body>
 <div id="header" class="nav">Nested Source Finder<div id="styles"></div></div>
 
-<div id="debug">
-Error Message<br>
-</div>
+<div id="debug"></div>
 
+<script>
+	var input = prompt("Please enter an input.")
+</script>
+	
 <script type="text/javascript" src="main.js"></script>
 
 <script>
-var SeedObject="universe";
-<!--var Offline=1;-->
+	var SeedObject=input;
 </script>
 
-<span style="display:none;">
-<!--<script>Offline=0;</script>--></span>
+<span style="display:none;"></span>
 
 <script>
-	LaunchNest(SeedObject.toLowerCase());
+	Launch(SeedObject);
 </script>
 
 </body>
