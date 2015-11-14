@@ -29,8 +29,8 @@ while (true)
   citation = "";
   while(true)
   {
-  	index1 = rawText.search("(");
-  	index2 = rawText.search(")");
+  	index1 = rawText.search("\\(");
+  	index2 = rawText.search("\\)");
   	if(isNumeric(rawText.substr(index1+1,index2-1)) && 1500 < rawText.substr(index1+1,index2-1) < 2100)
   	{
   		citation+=rawText.substr(0,index1-1);
