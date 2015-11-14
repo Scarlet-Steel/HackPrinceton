@@ -9,41 +9,6 @@ function Node(name,contains)
 	NodesN++;
 }
 
-function CheckMissingNodes()
-{
-	var allContents=[];
-	var allMissing=[];
-	for (var i in Nodes)
-	{
-		var thisNode=Nodes[i];
-		for (var i2 in thisNode.contains)
-		{
-			thisContent=thisNode.contains[i2];
-			if (typeof(thisContent)!="string")
-			{
-				for (var i3 in thisContent) {allContents.push(thisContent[i3]);}
-			}
-			else allContents.push(thisContent);
-		}
-	}
-	for (var i in allContents)
-	{
-		var thisContent=allContents[i];
-		if (thisContent.charAt(0)==".") thisContent=thisContent.substring(1);
-		thisContent=thisContent.split(",");
-		thisContent=thisContent[0];
-		if (!Nodes[thisContent] && thisContent!="") allMissing.push(thisContent);
-	}
-//	allMissing=allMissing.filter(function(elem,pos) {return allMissing.indexOf(elem)==pos;});//remove duplicates
-
-	var str="Nodes that are linked to, but don't exist :\n";
-	for (var i in allMissing)
-	{
-		str+=allMissing[i]+"\n";
-	}
-	alert(str);
-}
-
 function CleanNodes()
 {
 	for (var iT in Nodes)
@@ -86,10 +51,10 @@ function CleanNodes()
 
 var iN=0;
 var Instances=[];
-function Instance(what)
+function Instance(source)
 {
 	this.name="node";
-	this.type=Nodes[what];
+	this.type=Nodes[source];
 	this.parent=0;
 	this.children=[];
 	this.n=iN;
@@ -181,73 +146,53 @@ Instance.prototype.List=function()
 	else document.getElementById("div"+this.n).innerHTML='<span class="emptyNode">'+this.name+'</span>';
 }
 
-function Make(what)
+function Make(source)
 {
-	return new Instance(what);
+	return new Instance(source);
 }
 
-function Debug(what)
+function Debug(source)
 {
-	document.getElementById("debug").innerHTML=document.getElementById("debug").innerHTML+'<br>'+what;
+	document.getElementById("debug").innerHTML=document.getElementById("debug").innerHTML+'<br>'+source;
 }
 
-function Toggle(what)
+function Toggle(source)
 {
-	if (Instances[what].display==0)
+	if (Instances[source].display==0)
 	{
 
-		for (var i in Instances[what].children)
+		for (var i in Instances[source].children)
 		{
-			if (Instances[what].children[i].grown==false) {Instances[what].children[i].Grow(0);Instances[what].children[i].List(0);}
+			if (Instances[source].children[i].grown==false) {Instances[source].children[i].Grow(0);Instances[source].children[i].List(0);}
 		}
 
 
-		Instances[what].display=1;
-		document.getElementById("container"+what).style.display="block";
-		document.getElementById("arrow"+what).innerHTML="-";
+		Instances[source].display=1;
+		document.getElementById("container"+source).style.display="block";
+		document.getElementById("arrow"+source).innerHTML="-";
 	}
-	else if (Instances[what].display==1)
+	else if (Instances[source].display==1)
 	{
-		Instances[what].display=0;
-		document.getElementById("container"+what).style.display="none";
-		document.getElementById("arrow"+what).innerHTML="+";
+		Instances[source].display=0;
+		document.getElementById("container"+source).style.display="none";
+		document.getElementById("arrow"+source).innerHTML="+";
 	}
 }
-
-
-
-//And now, the fun begins!
-
-//How to add a new Node :
-//	new Node(name,contains,name generator);
-//		-name is the referral name for this Node. Unless a name generator is specified, this name will be the default name for any instances of this Node.
-//		-contains is an array of Nodes that an instance of this Node contains, specified by their name.
-//			-For example, ["banana"] means this Node contains exactly 1 instance of a banana. ["banana","orange"] means it contains 1 banana and 1 orange.
-//			-["banana","strawberry,25%"] means it will contain 1 banana, and has a 25% probability of also containing a strawberry.
-//			-["banana,2-7"] means it will contain between 2 and 7 bananas.
-//			-[".banana"] will not include a banana in the Node; instead, the Node will contain whatever the banana normally contains.
-//			-["banana",["sugar","honey"]] will include a banana, and either sugar or honey. Unfortunately, this does not work with the format ".sugar" or ".honey".
-//		-name generator is optional; if specified, the instance of the Node will be named according to this.
-//			It can be either an array containing other arrays (the name will be patched up from an element of each array) or an identifier for the Name function, like *BOOK*.
-//			A name generator of [["blue ","red "],["frog","toad"]] will produce names such as "blue frog" or "red toad".
 
 Debug('Building...');
 
 CleanNodes();
 
-//CheckMissingNodes();
-//alert("There are "+NodesN+" node archetypes.");
-
 document.getElementById("debug").innerHTML="";
 Debug('<div id="div0" class="node"></div>');
 
-function LaunchNest(what)
+function LaunchNest(source)
 {
-	if (!Nodes[what])
+	if (!Nodes[source])
 		{
-			what="error";
+			source="Error.";
 		}
-	var Seed = Make(what);
+	var Seed = Make(source);
 	Seed.Grow(0);
 	Seed.List();
 }
