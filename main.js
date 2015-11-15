@@ -112,29 +112,41 @@ function getSources()
 	var index = 0;
 	var citation = "";
 	var count = 1;
+	var temp = 0;
 
 	while (true)
 	{
 		citation = "";
+		temp = 0;
   		while(true)
   		{
   			index = rawText.indexOf("(");
+			console.log(rawText.substring(index+1,index+5))
   			if(isNumeric(rawText.substring(index+1,index+5)) && 1500 < rawText.substring(index+1,index+5) < 2100)
   			{
-  				citation+=rawText.substring(rawText.lastIndexOf(count+".")+2,index);
+				console.log(rawText.substring(0,50));
+  				citation+=rawText.substring(rawText.substring(0,index).lastIndexOf(count+".")+2,index);
+				console.log(citation)
   				break
   			}
+			else
+			{
+				rawText = rawText.substring(index+1);
+			}
   		}
+		console.log(rawText.substring(0,50));
   		rawText = rawText.substring(index+7);
-  
   		index = rawText.indexOf(".");
   		citation+="| "+rawText.substring(0,index);
   		sources.push(citation);
 		console.log(citation);
 		
-  		rawText = rawText.substring(index+7+citation.length);
+  		rawText = rawText.substring(index+7);
   		count++;
-		
+		if(count>24)
+		{
+			break;
+		}
 	
 	}
 	
