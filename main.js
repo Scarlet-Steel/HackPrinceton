@@ -1,20 +1,22 @@
 var Nodes=[];
 var NodesN=0;
-function Node(name,contains)
+function Node(title,author,contains)
 {
-	this.name=name;
+	this.title=title;
+	this.author=author
 	this.contains=contains;
 
-	Nodes[name]=this;
+	Nodes[title]=this;
 	NodesN++;
 }
 
 var iN=0;
 var Instances=[];
-function Instance(source)
+function Instance(title,author)
 {
-	this.name=source;
-	this.type=Nodes[source];
+	this.title=title
+	this.author=author
+	this.type=Nodes[title];
 	this.parent=0;
 	this.children=[];
 	this.n=iN;
@@ -30,55 +32,49 @@ function Instance(source)
 
 Instance.prototype.Name=function()
 {
-	if (typeof(this.name)!="string")
+	if (typeof(this.title)!="string")
 	{
 		var str="";
-		if (typeof(this.name[0])=="string") str+=Choose(this.name);
+		if (typeof(this.title[0])=="string") str+=Choose(this.title);
 		else
 		{
-			for (var i in this.name)
+			for (var i in this.title)
 			{
-				str+=Choose(this.name[i]);
+				str+=Choose(this.title[i]);
 			}
 		}
-		this.name=str;
+		this.title=str;
 	}
 
-	nameParts=this.name.split("|");
-	this.name=nameParts[0];
+	nameParts=this.title.split("|");
+	this.title=nameParts[0];
 
-	if (nameParts[1]!=undefined) this.name=this.name+nameParts[1];
+	if (nameParts[1]!=undefined) this.title=this.title+nameParts[1];
 
 }
 
-Instance.prototype.GetPDF=function()
-{
-	//Gets PDF from JSTOR using title string
-}
-
-Instance.prototype.ConvertPDFToTxt=function()
-{
-	//Takes the PDF and gets a .txt file of the last ??? pages
-}
-
-Instance.prototype.findSources=function()
+Instance.prototype.Grow=function()
 {
 	if (this.grown==false || this.empty==true)
 	{
 		this.Name();
+		console.log(this)
 		for (var i in this.type.contains)
 		{
-			toMake=this.type.contains[i];
+			toMake = this.type.contains[i];
+			var toMakeP = toMake.split(" | ")
+			var toMakeT = toMakeP[1];
+			var toMakeA = toMakeP[0];
 			
-			if (typeof(Nodes[toMake])=="undefined")
+			if (typeof(Nodes[toMakeT])=="undefined")
 			{
-				new Node(toMake, []);
+				new Node(toMakeT, toMakeA, []);
 			}
 			else
 			{
 				this.empty = false;
 			}
-			var New=Make(Nodes[toMake].name);
+			var New=Make(toMakeT,toMakeA);
 			
 			New.parent=this;
 			this.children.push(New);
@@ -92,21 +88,74 @@ Instance.prototype.List=function()
 	if (this.render==false)
 	{
 		var str="";
-		//for (var i in this.children)
-		//{
-		//	str+='<div id="div'+this.children[i].n+'"></div>';
-		//}
 	
-		console.log(document.getElementById("div"+this.n))
-		console.log(this)
-		document.getElementById("container"+this.parent.n).innerHTML += '<div id="div'+this.n+'"><a href="javascript:Toggle('+this.n+');" style="padding-right:8px;" alt="archetype : '+(this.name)+'" title="archetype : '+(this.name)+'"><span class="arrow" id="arrow'+this.n+'">+</span> '+this.name+'</a><div id="container'+this.n+'" class="node" style="display:none;"></div></>';
+		document.getElementById("container"+this.parent.n).innerHTML += '<div id="div'+this.n+'"><a href="javascript:Toggle('+this.n+');" style="padding-right:8px;" alt="archetype : '+(this.title)+'" title="archetype : '+(this.title)+'"><span class="arrow" id="arrow'+this.n+'">+</span> '+this.title+'\n'+this.author+'</a><div id="container'+this.n+'" class="node" style="display:none;"></div></>';
 		this.render = true;
 	}
 }
 
-function Make(source)
+function getSources()
 {
-	return new Instance(source);
+	var sources = []
+
+	var rawText = "References 1. Larkin PA (1996) Concepts and issues in marine ecosystem management. Rev Fish Biol Fisheries 6: 139–164. 2. Ruckelshaus M, Klinger T, Knowlton N, DeMaster DP (2008) Marine ecosystem-based management in practice: scientific and governance challenges. Biosci 58: 53–63. 3. Brewer JF (2011) Paper fish and policy conflict: Catch shares and ecosystem- based management in Maine's groundfishery. Ecol Soc 16: 15. 4. Corkeron P (2006) Opposing views of the --Ecosystem Approach'' to fisheries management. Conserv Biol 20: 617–619. 5. Stephenson RL, Lane DE (1995) Fisheries Management Sciences: a plea for conceptual change. Can J Fish Aquat Sci 52: 2051–2056. ";
+
+	function isNumeric(n)
+	{
+		return !isNaN(parseFloat(n)) && isFinite(n);
+	}
+
+	var indexOfReference = rawText.search("References");
+	rawText = rawText.substring(indexOfReference+11);
+
+	var index = 0;
+	var citation = "";
+	var test = "";
+	var count = 1;
+
+	while (true)
+	{
+		citation = "";
+  		while(true)
+  		{
+  			index = rawText.search("\\(");
+  			if(isNumeric(rawText.substring(index+1,index+5)) && 1500 < rawText.substring(index+1,index+5) < 2100)
+  			{
+  				citation+=rawText.substring(rawText.search("\\."+2),index);
+  				break
+  			}
+  		}
+  		rawText = rawText.substring(index+7);
+  
+  		index = rawText.search("\\.");
+  		citation+="| "+rawText.substring(0,index);
+  		sources.push(citation)
+
+  		count++;
+  		index = rawText.search(count+".");
+  		if(index == -1)
+  		{
+  			break
+  		}
+  		else
+  		{
+  			rawText = rawText.substring(index);
+  		}
+		if(0 < rawText.search(count+".") < 5)
+		{
+			console.log(rawText)
+			console.log(count)
+			console.log(rawText.search(count+"."));
+			rawText = rawText.substring(rawText.search(count+"."));
+		}
+	}
+	
+	return sources;
+}
+
+function Make(title,author)
+{
+	return new Instance(title,author);
 }
 
 function Debug(source)
@@ -118,13 +167,12 @@ function Toggle(source)
 {
 	if (Instances[source].display==0)
 	{
-		Instances[source].findSources(0);
+		Instances[source].Grow(0);
 		if (Instances[source].type.contains.length==0)
-		{
-			Instances[source].type.contains = ["lelchats"];
-			console.log(Instances[source])
+		{			
+			Instances[source].type.contains = getSources();
 			Instances[source].empty=true;
-			Instances[source].findSources(0);
+			Instances[source].Grow(0);
 		}
 
 		for (var i in Instances[source].children)
@@ -147,11 +195,8 @@ function Toggle(source)
 	}
 }
 
-new Node(input, ["a", "b", "c", "d"])
-new Node("a", ["aa", "ab", "ac", "ad"]);
-new Node("b", ["ba", "bb", "ac", input]);
-new Node("c", []);
-new Node("d", ["aa", "bb", input, "dd"]);
+var parse = input.split(" | ");
+new Node(parse[1], parse[0], getSources());
 
 Debug('Building...');
 
@@ -160,17 +205,24 @@ Debug('<div id="div0" class="node"></div>');
 
 function Launch(source)
 {
-	if (!Nodes[source])
+	var parse = source.split(" | ")
+	var title = parse[1];
+	var author = parse[0];
+	
+	console.log(title)
+	console.log(author)
+	if (!Nodes[title])
 		{
-			source="Error.";
+			title="Error.";
+			author="Error.";
 		}
-	var Seed = Make(source);
-	Seed.findSources(0);
+	var Seed = Make(title,author);
+	Seed.Grow(0);
 	
 	var str="";
 	for (var i in Seed.children)
 	{
 		str+='<div id="div'+Seed.children[i].n+'"></div>';
 	}
-	document.getElementById("div"+Seed.n).innerHTML='<a href="javascript:Toggle('+Seed.n+');" style="padding-right:8px;" alt="archetype : '+(Seed.name)+'" title="archetype : '+(Seed.name)+'"><span class="arrow" id="arrow'+Seed.n+'">+</span> '+Seed.name+'</a><div id="container'+Seed.n+'" class="node" style="display:none;">'+str+'</div>';
+	document.getElementById("div"+Seed.n).innerHTML='<a href="javascript:Toggle('+Seed.n+');" style="padding-right:8px;" alt="archetype : '+(Seed.title)+'" title="archetype : '+(Seed.title)+'"><span class="arrow" id="arrow'+Seed.n+'">+</span> '+Seed.title+'\n'+Seed.author+'</a><div id="container'+Seed.n+'" class="node" style="display:none;">'+str+'</div>';
 }
