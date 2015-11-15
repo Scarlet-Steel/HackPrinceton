@@ -13,13 +13,15 @@ var iN=0;
 var Instances=[];
 function Instance(source)
 {
-	this.name="node";
+	this.name=source;
 	this.type=Nodes[source];
 	this.parent=0;
 	this.children=[];
 	this.n=iN;
 	this.display=0;
 	this.grown=false;
+	this.render=false;
+	this.empty=false;
 	iN++;
 	Instances.push(this);
 
@@ -61,80 +63,45 @@ Instance.prototype.ConvertPDFToTxt=function()
 
 Instance.prototype.findSources=function()
 {
-	if (this.grown==false)
+	if (this.grown==false || this.empty==true)
 	{
-		var sources = []
-
-		var rawText = "random shit blah References 1. Larkin PA (1996) Concepts and issues in marine ecosystem management. Rev Fish Biol Fisheries 6: 139–164. 2. Ruckelshaus M, Klinger T, Knowlton N, DeMaster DP (2008) Marine ecosystem-based management in practice: scientific and governance challenges. Biosci 58: 53–63. 3. Brewer JF (2011) Paper fish and policy conflict: Catch shares and ecosystem- based management in Maine’s groundfishery. Ecol Soc 16: 15. 4. Corkeron P (2006) Opposing views of the ––Ecosystem Approach’’ to fisheries management. Conserv Biol 20: 617–619. 5. Stephenson RL, Lane DE (1995) Fisheries Management Sciences: a plea for conceptual change. Can J Fish Aquat Sci 52: 2051–2056. ";
-
-		function isNumeric(n) {
-  		return !isNaN(parseFloat(n)) && isFinite(n);
-		}
-
-		//Search backwards through file until you see "References"
-		//count = 1
-		//Take everything char by char until (****) with 4 integer chars
-		//Skip the date and then take everything until .
-		//Add that whole thing using paper.children.push(citation)
-		//count++
-		//Find count. and then go to step 3
-
-		var indexOfReference = rawText.search("References");
-		rawText = rawText.substring(indexOfReference+11); //cuts out "References" and everything before
-
-
-		var index1 = 0;
-		var citation = "";
-		var test = "";
-		var count = 1;
-
-
-
-		while (true)
+		this.Name();
+		for (var i in this.type.contains)
 		{
-  		citation = "";
-  		while(true)
-  		{
-  			index1 = rawText.search("\\(");
-  			if(isNumeric(rawText.substring(index1+1,index1+5)) && 1500 < rawText.substring(index1+1,index1+5) < 2100)
-  			{
-  				citation+=rawText.substring(0,index1);
-  				break
-  			}
-  		}
-  		rawText = rawText.substring(index1+7);
-  
-  		index1 = rawText.search("\\.");
-  		citation+="| "+rawText.substring(0,index1); //adds the title of the paper to the authors, separated by a bar
-  		sources.push(citation)
-
-  		count++;
-  		index1 = rawText.search(count+".");
-  		if(index1 == -1)
-  		{
-  			break
-  		}
-  		else
-  		{
-  			rawText = rawText.substring(index1);
-  		}
-	}
-	this.grown=true;
+			toMake=this.type.contains[i];
+			
+			if (typeof(Nodes[toMake])=="undefined")
+			{
+				new Node(toMake, []);
+			}
+			else
+			{
+				this.empty = false;
+			}
+			var New=Make(Nodes[toMake].name);
+			
+			New.parent=this;
+			this.children.push(New);
+		}
+		this.grown=true;
 	}
 }
 
-
 Instance.prototype.List=function()
 {
-	var str="";
-	var addStyle="";
-	for (var i in this.children)
+	if (this.render==false)
 	{
-		str+='<div id="div'+this.children[i].n+'">'+this.children[i].name+'</div>';
+		var str="";
+		//for (var i in this.children)
+		//{
+		//	str+='<div id="div'+this.children[i].n+'"></div>';
+		//}
+	
+		console.log(document.getElementById("div"+this.n))
+		console.log(this)
+		document.getElementById("container"+this.parent.n).innerHTML += '<div id="div'+this.n+'"><a href="javascript:Toggle('+this.n+');" style="padding-right:8px;" alt="archetype : '+(this.name)+'" title="archetype : '+(this.name)+'"><span class="arrow" id="arrow'+this.n+'">+</span> '+this.name+'</a><div id="container'+this.n+'" class="node" style="display:none;"></div></>';
+		this.render = true;
 	}
-	//if (this.children.length>0) document.getElementById("div"+this.n).innerHTML='<span onclick="Toggle('+this.n+');"><span class="arrow" id="arrow'+this.n+'">+</span> '+this.name+'</span><div id="container'+this.n+'" class="node" style="display:none;">'+str+'</div>';
-	if (this.children.length>0) document.getElementById("div"+this.n).innerHTML='<a href="javascript:Toggle('+this.n+');" style="padding-right:8px;" alt="archetype : '+(this.type.name)+'" title="archetype : '+(this.type.name)+'"><span class="arrow" id="arrow'+this.n+'">+</span> '+this.type.name+'</a><div id="container'+this.n+'" class="node" style="display:none;'+addStyle+'">'+str+'</div>';
-	else document.getElementById("div"+this.n).innerHTML='<span class="emptyNode">'+this.name+'</span>';
 }
 
 function Make(source)
@@ -151,12 +118,22 @@ function Toggle(source)
 {
 	if (Instances[source].display==0)
 	{
+		Instances[source].findSources(0);
+		if (Instances[source].type.contains.length==0)
+		{
+			Instances[source].type.contains = ["lelchats"];
+			console.log(Instances[source])
+			Instances[source].empty=true;
+			Instances[source].findSources(0);
+		}
 
 		for (var i in Instances[source].children)
 		{
-			if (Instances[source].children[i].grown==false) {Instances[source].children[i].findSources(0);Instances[source].children[i].List(0);}
+			if (Instances[source].children[i].render==false)
+			{
+				Instances[source].children[i].List(0);
+			}
 		}
-
 
 		Instances[source].display=1;
 		document.getElementById("container"+source).style.display="block";
@@ -173,7 +150,7 @@ function Toggle(source)
 new Node(input, ["a", "b", "c", "d"])
 new Node("a", ["aa", "ab", "ac", "ad"]);
 new Node("b", ["ba", "bb", "ac", input]);
-new Node("c", ["aa", "bb", "ac", "ad"]);
+new Node("c", []);
 new Node("d", ["aa", "bb", input, "dd"]);
 
 Debug('Building...');
@@ -189,5 +166,11 @@ function Launch(source)
 		}
 	var Seed = Make(source);
 	Seed.findSources(0);
-	Seed.List();
+	
+	var str="";
+	for (var i in Seed.children)
+	{
+		str+='<div id="div'+Seed.children[i].n+'"></div>';
+	}
+	document.getElementById("div"+Seed.n).innerHTML='<a href="javascript:Toggle('+Seed.n+');" style="padding-right:8px;" alt="archetype : '+(Seed.name)+'" title="archetype : '+(Seed.name)+'"><span class="arrow" id="arrow'+Seed.n+'">+</span> '+Seed.name+'</a><div id="container'+Seed.n+'" class="node" style="display:none;">'+str+'</div>';
 }
