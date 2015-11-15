@@ -112,47 +112,40 @@ function getSources()
 	var index = 0;
 	var citation = "";
 	var count = 1;
+	var temp = 0;
 
 	while (true)
 	{
 		citation = "";
+		temp = 0;
   		while(true)
   		{
   			index = rawText.indexOf("(");
+			console.log(rawText.substring(index+1,index+5))
   			if(isNumeric(rawText.substring(index+1,index+5)) && 1500 < rawText.substring(index+1,index+5) < 2100)
   			{
-  				citation+=rawText.substring(rawText.indexOf(".")+2,index);
+				console.log(rawText.substring(0,50));
+  				citation+=rawText.substring(rawText.substring(0,index).lastIndexOf(count+".")+2,index);
+				console.log(citation)
   				break
   			}
+			else
+			{
+				rawText = rawText.substring(index+1);
+			}
   		}
+		console.log(rawText.substring(0,50));
   		rawText = rawText.substring(index+7);
-  
   		index = rawText.indexOf(".");
   		citation+="| "+rawText.substring(0,index);
-  		sources.push(citation)
-		console.log(citation)
-		console.log(count)
+  		sources.push(citation);
+		console.log(citation);
 		
+  		rawText = rawText.substring(index+7);
   		count++;
-  		index = rawText.indexOf(count+".");
-  		if(index == -1)
-  		{
-  			break
-  		}
-  		else
-  		{
-  			rawText = rawText.substring(index);
-  		}
-
-		index = rawText.indexOf(" "+count+".")
-console.log(index)
-		while(1 < index && index < 10)
+		if(count>24)
 		{
-			console.log(count)
-			console.log(rawText.substring(0,50))
-			rawText = rawText.substring(rawText.substring(index+2).indexOf(count+"."));
-			index = rawText.indexOf(" "+count+".")
-			console.log(index)
+			break;
 		}
 	
 	}
